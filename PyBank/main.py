@@ -1,63 +1,51 @@
 
-import os
 import csv
 
-budget_data = os.path.join("Resources", "budget_data.csv")
 
 
+with open('budget_data.csv', 'r') as file:
+    reader = csv.reader(file)
+    next(reader)  # Skip the header row
 
-with open(budget_data, newline="") as csvfile:
-    csvreader = csv.reader(csvfile, delimiter=',')
-    csv_header = next(csvreader)
-    print(f"Header: {csv_header}")
-    
-    P = []
     months = []
+    profit_losses = []
+    changes = []
 
-    for rows in csvreader:
-        P.append(int(rows[1]))
-        months.append(rows[0])
+    for row in reader:
+        months.append(row[0])
+        profit_losses.append(int(row[1]))
 
-
-    revenue_change =[]
-
-    for x in range(1, len(P)):
-        revenue_change.append((int(P[x]) - int(P[x-1])))
-   
-    revenue_average_change = sum(revenue_change) / len(revenue_change)
-    revenue_average = round(revenue_average_change, 2)
-
-    total_months = len(months)
-
-    greatest_increase = max(revenue_change)
-
-    greatest_decrease = min(revenue_change)
+total_months = len(months)
 
 
-    
-    print ("Financial Analysis")
-    print("....................................................................................")
-    print ("Total Months:" + str(total_months))
-    print("Total:" + "$" + str(sum(P)))
-    print ("Average Change:" + "$" + str(revenue_average))
-    print("Greatest Increase in Profits: " + str(months[revenue_change.index(max(revenue_change))+1]) + " " + "($" + str(greatest_increase) + ")")
-    print("Greatest Decrease in Profits: " + str(months[revenue_change.index(min(revenue_change))+1]) + " " + "($" + str(greatest_decrease) + ")")
+net_total = sum(profit_losses)
 
 
-    file = open("output.txt","w")
+for i in range(1, total_months):
+    change = profit_losses[i] - profit_losses[i-1]
+    changes.append(change)
 
-    file.write("Financial Analysis" + "\n")
 
-    file.write("...................................................................................." + "\n")
+average_change = sum(changes) / len(changes)
 
-    file.write("total months: " + str(total_months) + "\n")
 
-    file.write("Total: " + "$" + str(sum(P)) + "\n")
 
-    file.write("Average change: " + "$" + str(revenue_average) + "\n")
+greatest_increase = max(changes)
+greatest_increase_date = months[changes.index(greatest_increase) + 1]
+greatest_decrease = min(changes)
+greatest_decrease_date = months[changes.index(greatest_decrease) + 1]
 
-    file.write("Greatest Increase in Profits: " + str(months[revenue_change.index(max(revenue_change))+1]) + " " + "($" + str(greatest_increase) + ")\n")
 
-    file.write("Greatest Decrease in Profits: " + str(months[revenue_change.index(min(revenue_change))+1]) + " " + "($" + str(greatest_decrease) + ")\n")
+print("Financial Analysis")
+print("-----------------------------")
+print(f"Total Months: {total_months}")
+print(f"Total: ${net_total}")
+print(f"Average Change: ${average_change:.2f}")
+print(f"Greatest Increase in Profits: {greatest_increase_date} (${greatest_increase})")
+print(f"Greatest Decrease in Profits: {greatest_decrease_date} (${greatest_decrease})")
 
-    file.close()
+
+
+
+
+
